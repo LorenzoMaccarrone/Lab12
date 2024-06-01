@@ -24,11 +24,18 @@ class Controller:
             self._view.create_alert("Selezionare anno")
         if self._view.ddcountry.value is None:
             self._view.create_alert("Selezionare paese ( Country )")
-
         self._model.creaGrafo(self._view.ddyear.value,self._view.ddcountry.value)
-
-
-
+        self._view.txt_result.controls.append(ft.Text("Grafo correttamente creato"))
+        self._view.txt_result.controls.append(ft.Text(f"Il grafo ha {self._model.getNumNodi()} vertici"))
+        self._view.txt_result.controls.append(ft.Text(f"Il grafo ha {self._model.getNumArchi()} archi"))
+        #disabilito i DD e il bottone crea grafo coì che l'utente non possa fare danni selezinoando un altro
+        #paese e un altro anno senza rilanciare l'applicazione
+        #DA CONTROLLARE se fosse questa l'interpretazione, cioè se l'utente volesse calcolare per un'altra combinazione
+        #paese anno deve rilanciare l'applicazione giusto?
+        #self._view.ddyear.disable = True NON FUNZIONANO!!!!!!!
+        #self._view.ddcountry.disable = True  NON FUNZIONANO!!!!!!!
+        #self._view.btn_graph.disable = True  NON FUNZIONANO!!!!!!!
+        self._view.update_page()
 
     def handle_volume(self, e):
         pass

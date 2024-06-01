@@ -34,7 +34,9 @@ class Model:
     def _addEdges(self, paese ,anno):
         #implementiamo la richiesta relativa agli edges
         allConnessioni= DAO.getAllEdges(paese, anno,self._idMap)
-        return allConnessioni
+        for c in allConnessioni:
+            if c.Retailer1 in self._grafo and c.Retailer2 in self._grafo:
+                self._grafo.add_edge(c.Retailer1, c.Retailer2, weight=c.peso)
 
 
     #helper function

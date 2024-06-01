@@ -39,6 +39,7 @@ class View(ft.UserControl):
 
         self.btn_graph = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handle_graph)
 
+
         row1 = ft.Row([self.ddyear, self.ddcountry, self.btn_graph],
                       alignment=ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row1)
