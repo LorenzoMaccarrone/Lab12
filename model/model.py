@@ -29,12 +29,13 @@ class Model:
         #creare gli archi
         #aggiungere gli archi al grafo
         #questi ultimi due punti li facciamo in una funzione ad hoc
-        self._addEdges(anno)
+        self._addEdges(paese,anno)
 
-    def _addEdges(self, anno):
+    def _addEdges(self, paese ,anno):
         #implementiamo la richiesta relativa agli edges
-        allConnessioni= DAO.getAllEdges(anno,self._idMap)
-        pass
+        allConnessioni= DAO.getAllEdges(paese, anno,self._idMap)
+        return allConnessioni
+
 
     #helper function
     def printGraphDetails(self):

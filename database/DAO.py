@@ -1,5 +1,6 @@
 from database.DB_connect import DBConnect
 from model.retailers import Retailers
+from model.connessioni import Connessioni
 
 
 class DAO():
@@ -65,19 +66,37 @@ class DAO():
         return result
 
     @staticmethod
-    def getAllEdges(anno,idMap):
+    def getAllEdges(paese,anno,idMap):
         conn = DBConnect.get_connection()
 
         result = []
 
         cursor = conn.cursor(dictionary=True)
-        query = """"""
+        query = """select tab1.Retailer_code as Retailer1, tab2.Retailer_code as Retailer2, count(distinct(tab1.Product_number)) as peso
+                        from
+                        (
+                        select gds.Retailer_code, gr.Retailer_name , gds.Product_number, gds.Quantity, gds.Date 
+                        from go_daily_sales gds , go_retailers gr 
+                        where gds.Retailer_code = gr.Retailer_code 
+                        and gr.Country = %s
+                        and YEAR(gds.`Date`) = %s
+                        ) as tab1,
+                        (
+                        select gds.Retailer_code, gr.Retailer_name , gds.Product_number, gds.Quantity, gds.Date 
+                        from go_daily_sales gds , go_retailers gr 
+                        where gds.Retailer_code = gr.Retailer_code 
+                        and gr.Country = %s
+                        and YEAR(gds.`Date`) = %s
+                        )as tab2
+                        where tab1.Product_number = tab2.Product_number
+                        and tab1.Retailer_code<tab2.Retailer_code
+                        group by tab1.Retailer_code, tab2.Retailer_code"""
 
-        cursor.execute(query, (anno,))
+        cursor.execute(query, (paese,anno,paese,anno))
         # usando la mappa passata possiamo appendere direttamente gli oggetti di tipo retailer
         # conoscendone solo l'identificativo.
         for row in cursor:
-            result.append(idMap[row["Retailer_code"]])
+            result.append(Connessioni(idMap[row["Retailer1"]], idMap[row["Retailer2"]],row["peso"]))
 
         cursor.close()
         conn.close()
