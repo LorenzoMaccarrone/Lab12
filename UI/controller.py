@@ -12,11 +12,21 @@ class Controller:
         self._listCountry = []
 
     def fillDD(self):
-        pass
-
+        nations=self._model.getCountry()
+        for n in nations:
+            self._view.ddcountry.options.append(ft.dropdown.Option(n))
+        for i in range(2015,2019):
+            self._view.ddyear.options.append(ft.dropdown.Option(str(i)))
+        self._view.update_page()
 
     def handle_graph(self, e):
-        pass
+        if self._view.ddyear.value is None:
+            self._view.create_alert("Selezionare anno")
+        if self._view.ddcountry.value is None:
+            self._view.create_alert("Selezionare paese ( Country )")
+
+        self._model.creaGrafo(self._view.ddyear.value,self._view.ddcountry.value)
+
 
 
 
