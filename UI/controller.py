@@ -22,8 +22,12 @@ class Controller:
     def handle_graph(self, e):
         if self._view.ddyear.value is None:
             self._view.create_alert("Selezionare anno")
+            return #questi return vanno messi altrimenti il programma
+                   # continua a girare anche senza aver inserito il valore
         if self._view.ddcountry.value is None:
             self._view.create_alert("Selezionare paese ( Country )")
+            return #questi return vanno messi altrimenti il programma
+                   # continua a girare anche senza aver inserito il valore
 
         self._model.creaGrafo(self._view.ddyear.value,self._view.ddcountry.value)
         self._view.txt_result.controls.append(ft.Text("Grafo correttamente creato"))
@@ -48,4 +52,19 @@ class Controller:
 
 
     def handle_path(self, e):
-        pass
+        nMinStr=self._view.txtN.value
+        try:
+            nMinInt=int(nMinStr)
+        except ValueError:
+            self._view.create_alert("Il valore inserito NON è intero")
+            self._view.update_page()
+            return #questi return vanno messi altrimenti il programma
+                   # continua a girare anche senza aver inserito il valore
+
+        if nMinInt<2:
+            self._view.create_alert("Inserire valore maggiore di 2")
+            self._view.update_page()
+            return #questi return vanno messi altrimenti il programma
+                   # continua a girare anche senza aver inserito il valore
+
+        path,pesoMax= self._model.getCammino(nMinInt)

@@ -1,3 +1,5 @@
+import copy
+
 from database.DAO import DAO
 import networkx as nx
 
@@ -56,6 +58,64 @@ class Model:
             result.append(tupla)
             result.sort(key=lambda tupla: tupla[1], reverse=True)
         return result
+
+    def getCammino(self, n):
+        self._bestPath = []
+        self._bestObjFun = 0
+        #dobbiamo trovare il cammino a peso massimo provando a partire da ogni nodo del grafo!!!
+        for v0 in self._nodes:
+            self._nodoPartenza=v0
+            parziale = [v0]
+            self._ricorsione(parziale, n)
+        return self._bestPath, self._bestObjFun
+
+    def _ricorsione(self, parziale, n):
+        #controlliamo se siamo in una soluzione ammissibile
+        #se voglio due archi potrò al massimo esplorare 3 nodi
+        #quindi il numero di nodi ammissibili è il numero di archi+1
+        if len(parziale) == n+1:
+            return
+        #controlliamo se questa nuova soluzione è migliore delle altre e se verifica la condizione
+        #tale per cui è una soluzinoe valida ovvero il nodo di arrivo è uguale a quello di partenza
+        #la soluzione migliore è una soluzione in cui viene rispettata la condizione finale
+        #altrimenti non è una soluzione interessante e non c'è la salviamo
+        if self.getObjFun(parziale) > self._bestObjFun and parziale[-1] == self._nodoPartenza:
+            self._bestObjFun = self.getObjFun(parziale)
+            self._bestPath = copy.deepcopy(parziale)
+
+        #continuo la ricorsione cercando il vicino di peso massimo
+        listaVicinoPeso=[]
+        tuplaVicinoPeso=()
+        for i in self._grafo.neighbors(parziale[-1]):
+            tuplaVicinoPeso=i, self._grafo[parziale[-1]][i]["weight"]
+            listaVicinoPeso.append(tuplaVicinoPeso)
+        #prendendo tutti i nodi rischiamo di prendere nodi non connessi!!
+        #dobbiamo tenere conto di questa condizione:
+        if len(listaVicinoPeso)==0:
+            return
+        else:
+            listaVicinoPeso.sort(key=lambda tuplaVicinoPeso:tuplaVicinoPeso[1], reverse=True)
+            #dobbiamo mettere la condizione per cui non cicla su nodi già presenti nel path!
+
+            for tupla in listaVicinoPeso:
+                if tupla not in parziale:
+                    parziale.append(tupla[0])
+                    break
+
+
+            #a questo punto ho aggiunto il nodo che mi interessa alla ricorsione quindi
+            #richiamo la ricorsione con il nuo parziale
+            self._ricorsione(parziale,n)
+            #facciamo backtracking
+            parziale.pop()
+
+    #con questa funzione calcolo il peso del percorso
+    def getObjFun(self, listOfNodes):
+        objVal = 0
+        for i in range(0, len(listOfNodes)-1):
+            objVal += self._grafo[listOfNodes[i]][listOfNodes[i+1]]["weight"]
+
+        return objVal
 
 
     #helper function
