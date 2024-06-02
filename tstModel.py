@@ -2,7 +2,9 @@ from database.DAO import DAO
 from model.model import Model
 
 myModel= Model()
-result= myModel._addEdges("France",2015)
+myModel.creaGrafo(2015,"France")
+result= myModel.volumi()
 
-print(len(result))
+for r in result:
+    print(f"{r[0]} --> {r[1]}")
 

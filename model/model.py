@@ -38,6 +38,25 @@ class Model:
             if c.Retailer1 in self._grafo and c.Retailer2 in self._grafo:
                 self._grafo.add_edge(c.Retailer1, c.Retailer2, weight=c.peso)
 
+    def volumi(self):
+        '''
+         1. controllo i vicini del primo nodo e sommo i pesi dei loro archi
+         2. mi salvo tale variabile in una dizionario con retailer e volume di vendita
+         3. ripeto quest'operazione per tutti i nodi del grafo
+         4. stampo a video il nome del retailer --> volume di vendita
+        '''
+        result=[] #lista che faccio diventare lista di tuple
+        for v in self._grafo:
+            vicini= self._grafo.neighbors(v)
+            volume = 0
+            tupla=()
+            for w in vicini:
+                volume += self._grafo[v][w]["weight"]
+            tupla= v, volume
+            result.append(tupla)
+            result.sort(key=lambda tupla: tupla[1], reverse=True)
+        return result
+
 
     #helper function
     def printGraphDetails(self):
